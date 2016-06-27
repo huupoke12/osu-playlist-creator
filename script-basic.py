@@ -35,8 +35,8 @@ def scan_folder(songPath):
     
     choose = input("\nDo you want to extract(copy) ALL your songs (it will take much time) and rename it correctly (enter 'c') OR \njust want to create the playlist file (enter others)?\n").lower()
     
-    if input == 'c': create_playlist(songPath, folderArray)
-    else: extract_song(songPath, folderArray)
+    if choose == 'c': extract_song(songPath, folderArray)
+    else: create_playlist(songPath, folderArray)
 
 def create_playlist(songPath, folderArray):
     print("Do you want to randomize the order?")
