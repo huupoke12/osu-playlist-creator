@@ -7,8 +7,8 @@ It plays music using the default player.
 
 Full version is old, don't use it.
 
-#The full version require *mutagen* installed:
+<!--The full version require *mutagen* installed:
 
-#python -m pip install -U pip
+python -m pip install -U pip
 
-#pip install mutagen
+pip install mutagen-->
