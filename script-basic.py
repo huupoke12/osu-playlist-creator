@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 import os
 import random
+import shutil
 
 pathFile = 'osu_songs_path.txt' # In the current directory, change path/name if u need
 playlistFile = 'Osu! Playlist.m3u' # In the current directory, change path/name if u need
-    
+extractPath = 'osu_songs_output\\' # In the current directory, change path/name if u need
+extractPath = os.path.join(extractPath, '')
 
 def check_osu_path_file():
     with open(pathFile, 'a+') as f:
@@ -30,14 +32,21 @@ def scan_folder(songPath):
     if trash in folderArray: folderArray.remove(trash)
     totalSong = len(folderArray)
     print("There are {} songs in the folder.".format(totalSong))
+    
+    choose = input("\nDo you want to extract(copy) ALL your songs (it will take much time) and rename it correctly (enter 'c') OR \njust want to create the playlist file (enter others)?\n").lower()
+    
+    if input == 'c': create_playlist(songPath, folderArray)
+    else: extract_song(songPath, folderArray)
+
+def create_playlist(songPath, folderArray):
     print("Do you want to randomize the order?")
-    askRandom = input("Enter 'y' if yes, others if not. ").lower()
+    askRandom = input("Enter 'y' if yes, others if not: ").lower()
     
     if askRandom == 'y':
         random.shuffle(folderArray)
         print("The order has been randomized.")
     
-    print("Please wait, it could takes much time depend on your number of songs ...")
+    print("Creating playlist file, please wait, it could takes much time depend on your number of songs ...")
     
     with open(playlistFile, 'w') as f:
         for folder in folderArray:
@@ -45,8 +54,46 @@ def scan_folder(songPath):
             songFile = currentPath + get_song(currentPath)
             f.write(songFile + "\n")
 
-    print("Done. File '{}' is successfully written.".format(playlistFile))
+    print("Done. File '{}' was successfully written.".format(playlistFile))
     print("Please move and/or open the file depend on your music player.")
+
+def extract_song(songPath, folderArray):
+    allowContinue = True
+    if os.path.isdir(extractPath):
+        print("There is already a folder named '{}', do you want to delete and recreate it?".format(extractPath))
+        askDelete = input("Enter 'y' if yes, others if not: ")
+        if askDelete == 'y':
+            print("Deleting folder '{}' ...".format(extractPath))
+            shutil.rmtree(extractPath)
+            allowContinue = True
+        else:
+            print("Ok, just handle it yourself.")
+            allowContinue = False
+            return None
+            
+        
+    if allowContinue:
+        print("Creating folder '{}' ...".format(extractPath))
+        os.makedirs(extractPath)
+        print("Copying to folder '{}'. Please wait, it could take much time depend on the number of songs ...".format(extractPath))
+        for folder in folderArray:
+            currentPath = os.path.join(songPath + folder, '')
+            songFile = currentPath + get_song(currentPath)
+            details = get_song_details(folder)
+            extension = os.path.splitext(songFile)[-1]
+            songEditedName = details[0] + " - " + details[1]
+            shutil.copyfile(songFile, extractPath + songEditedName + extension)
+        print("Done. The songs is in '{}'".format(extractPath)) 
+        
+
+def get_song_details(folderName):
+    splitSpace = folderName.split(' ')
+    if splitSpace[0].isdigit(): splitSpace.pop(0)
+    rawDetail = ' '.join(splitSpace)
+    detailArray = rawDetail.split(' - ')
+    title = detailArray[1].strip()
+    artist = detailArray[0].strip()
+    return [title, artist]
 
 def get_song(currentPath):
     found = False
