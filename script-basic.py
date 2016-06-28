@@ -33,12 +33,12 @@ def scan_folder(songPath):
     totalSong = len(folderArray)
     print("There are {} songs in the folder.".format(totalSong))
     
-    choose = input("\nDo you want to extract(copy) ALL your songs (it will take much time) and rename it correctly (enter 'c') OR \njust want to create the playlist file (enter others)?\n").lower()
+    choose = input("\nDo you want to extract(copy) ALL your songs (it will take much time) (enter 'c') OR \njust want to create the playlist file (enter others)?\n").lower()
     
-    if choose == 'c': extract_song(songPath, folderArray)
-    else: create_playlist(songPath, folderArray)
+    if choose == 'c': extract_song(songPath, folderArray, totalSong)
+    else: create_playlist(songPath, folderArray, totalSong)
 
-def create_playlist(songPath, folderArray):
+def create_playlist(songPath, folderArray, totalSong):
     print("Do you want to randomize the order?")
     askRandom = input("Enter 'y' if yes, others if not: ").lower()
     
@@ -49,15 +49,16 @@ def create_playlist(songPath, folderArray):
     print("Creating playlist file, please wait, it could takes much time depend on your number of songs ...")
     
     with open(playlistFile, 'w') as f:
-        for folder in folderArray:
+        for i, folder in enumerate(folderArray):
+            show_percent(i, totalSong)
             currentPath = os.path.join(songPath + folder, '')
             songFile = currentPath + get_song(currentPath)
             f.write(songFile + "\n")
 
-    print("Done. File '{}' was successfully written.".format(playlistFile))
+    print("\nDone. File '{}' was successfully written.".format(playlistFile))
     print("Please move and/or open the file depend on your music player.")
 
-def extract_song(songPath, folderArray):
+def extract_song(songPath, folderArray, totalSong):
     allowContinue = True
     if os.path.isdir(extractPath):
         print("There is already a folder named '{}', do you want to delete and recreate it?".format(extractPath))
@@ -76,14 +77,21 @@ def extract_song(songPath, folderArray):
         print("Creating folder '{}' ...".format(extractPath))
         os.makedirs(extractPath)
         print("Copying to folder '{}'. Please wait, it could take much time depend on the number of songs ...".format(extractPath))
-        for folder in folderArray:
-            currentPath = os.path.join(songPath + folder, '')
-            songFile = currentPath + get_song(currentPath)
-            details = get_song_details(folder)
-            extension = os.path.splitext(songFile)[-1]
-            songEditedName = details[0] + " - " + details[1]
-            shutil.copyfile(songFile, extractPath + songEditedName + extension)
-        print("Done. The songs is in '{}'".format(extractPath)) 
+        
+        with open(extractPath + 'output_songs.m3u', 'w') as f:
+            for i, folder in enumerate(folderArray):
+                show_percent(i, totalSong)
+                currentPath = os.path.join(songPath + folder, '')
+                songFile = currentPath + get_song(currentPath)
+                details = get_song_details(folder)
+                extension = os.path.splitext(songFile)[-1]
+                songEditedName = details[0] + " - " + details[1]
+                copiedSongFile = songEditedName + extension
+                shutil.copyfile(songFile, extractPath + copiedSongFile)
+            
+                f.write(copiedSongFile + "\n")
+            
+        print("\nDone. The songs is in '{}'".format(extractPath)) 
         
 
 def get_song_details(folderName):
@@ -108,6 +116,11 @@ def get_song(currentPath):
 
         elif found: break
 
+def show_percent(now, total):
+    percent = round(now/total * 100)
+    print("Processing {}/{} ({}%)".format(now, total, percent), end='\r')
+    
+
 check_osu_path_file()
 
-input("\nPress any key to quit...\n")
+input("\nPress enter key to quit...\n")
