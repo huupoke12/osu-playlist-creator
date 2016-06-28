@@ -50,7 +50,7 @@ def create_playlist(songPath, folderArray, totalSong):
     
     with open(playlistFile, 'w') as f:
         for i, folder in enumerate(folderArray):
-            show_percent(i, totalSong)
+            show_percent(i + 1, totalSong)
             currentPath = os.path.join(songPath + folder, '')
             songFile = currentPath + get_song(currentPath)
             f.write(songFile + "\n")
@@ -80,7 +80,7 @@ def extract_song(songPath, folderArray, totalSong):
         
         with open(extractPath + 'output_songs.m3u', 'w') as f:
             for i, folder in enumerate(folderArray):
-                show_percent(i, totalSong)
+                show_percent(i + 1, totalSong)
                 currentPath = os.path.join(songPath + folder, '')
                 songFile = currentPath + get_song(currentPath)
                 details = get_song_details(folder)
