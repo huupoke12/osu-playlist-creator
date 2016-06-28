@@ -74,11 +74,12 @@ def extract_song(songPath, folderArray, totalSong):
             
         
     if allowContinue:
+        playlistOutput = 'output_songs.m3u'
         print("Creating folder '{}' ...".format(extractPath))
         os.makedirs(extractPath)
         print("Copying to folder '{}'. Please wait, it could take much time depend on the number of songs ...".format(extractPath))
         
-        with open(extractPath + 'output_songs.m3u', 'w') as f:
+        with open(extractPath + playlistOutput, 'w') as f:
             for i, folder in enumerate(folderArray):
                 show_percent(i + 1, totalSong)
                 currentPath = os.path.join(songPath + folder, '')
@@ -91,7 +92,8 @@ def extract_song(songPath, folderArray, totalSong):
             
                 f.write(copiedSongFile + "\n")
             
-        print("\nDone. The songs is in '{}'".format(extractPath)) 
+        print("\nDone. The songs is in '{}'".format(extractPath))
+        print("The playlist file named '{}' is in the same folder as the songs.".format(playlistOutput))
         
 
 def get_song_details(folderName):
