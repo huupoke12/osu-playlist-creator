@@ -3,10 +3,15 @@ import os
 import random
 import shutil
 
-pathFile = 'osu_songs_path.txt' # In the current directory, change path/name if u need
-playlistFile = 'Osu! Playlist.m3u' # In the current directory, change path/name if u need
-extractPath = 'osu_songs_output\\' # In the current directory, change path/name if u need
+# Change path/name if u need
+pathFile = 'osu_songs_path.txt'
+playlistFile = 'Osu! Playlist.m3u'
+extractPath = 'Osu! Extracted Songs\\'
 extractPath = os.path.join(extractPath, '')
+listOutput = 'extracted_songs.txt'
+playlistOutputSongs = 'Osu! Songs Extracted.m3u'
+currentFolderAbsPath = os.path.abspath('')
+currentFolderAbsPath = os.path.join(currentFolderAbsPath, '')
 
 def check_osu_path_file():
     with open(pathFile, 'a+') as f:
@@ -74,12 +79,13 @@ def extract_song(songPath, folderArray, totalSong):
             
         
     if allowContinue:
-        playlistOutput = 'output_songs.m3u'
+        
+        
         print("Creating folder '{}' ...".format(extractPath))
         os.makedirs(extractPath)
         print("Copying to folder '{}'. Please wait, it could take much time depend on the number of songs ...".format(extractPath))
         
-        with open(extractPath + playlistOutput, 'w') as f:
+        with open(listOutput, 'w') as list, open(playlistOutputSongs, 'w') as playlist:
             for i, folder in enumerate(folderArray):
                 show_percent(i + 1, totalSong)
                 currentPath = os.path.join(songPath + folder, '')
@@ -90,10 +96,12 @@ def extract_song(songPath, folderArray, totalSong):
                 copiedSongFile = songEditedName + extension
                 shutil.copyfile(songFile, extractPath + copiedSongFile)
             
-                f.write(copiedSongFile + "\n")
+                list.write(copiedSongFile + "\n")
+                playlist.write(currentFolderAbsPath + extractPath + copiedSongFile + "\n")
             
         print("\nDone. The songs is in '{}'".format(extractPath))
-        print("The playlist file named '{}' is in the same folder as the songs.".format(playlistOutput))
+        print("The list of extracted songs is '{}'".format(listOutput))
+        print("The playlist file named '{}'. You can copy it to playlist folder, depends on the music player".format(playlistOutputSongs))
         
 
 def get_song_details(folderName):
@@ -120,7 +128,7 @@ def get_song(currentPath):
 
 def show_percent(now, total):
     percent = round(now/total * 100)
-    print("Processing {}/{} ({}%)".format(now, total, percent), end='\r')
+    print("Processing {}/{} ({}%). Please wait ...".format(now, total, percent), end='\r')
     
 
 check_osu_path_file()
