@@ -6,7 +6,7 @@ import shutil
 # Change path/name if u need
 pathFile = 'osu_songs_path.txt'
 playlistFile = 'Osu! Playlist.m3u'
-extractPath = 'Osu! Extracted Songs\\'
+extractPath = 'Osu! Extracted Songs'
 extractPath = os.path.join(extractPath, '')
 listOutput = 'extracted_songs.txt'
 playlistOutputSongs = 'Osu! Songs Extracted.m3u'
